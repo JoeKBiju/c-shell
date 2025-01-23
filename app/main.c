@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 int main() {
   // READ-EVAL-PRINT-LOOP
@@ -17,6 +18,9 @@ int main() {
     //When inputing command the newline char is put into the buffer when pressing "ENTER".
     // '/0' is the NULL character whcich represents the end of a string.
     input[strlen(input)-1] = '\0';
+    if (!strcmp(input, "exit 0")) {
+      return 0;
+    }
     printf("%s: command not found\n", input);
   }
   return 0;
