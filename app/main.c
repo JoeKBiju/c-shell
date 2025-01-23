@@ -4,7 +4,7 @@ int main() {
   // Flush after every printf
   setbuf(stdout, NULL);
 
-   printf("$ ");
+  printf("$ ");
 
   // Wait for user input
   char input[100];
