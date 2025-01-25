@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+const char builtins[][12] = {"type", "echo", "exit"};
+
 int parseCommand(char* command, int len) {
   char word[100];
   int i = 0;
@@ -15,6 +17,14 @@ int parseCommand(char* command, int len) {
     if (*(command + i+1) == '0') { return 1; }
   } else if (!strcmp(word, "echo")) {
     printf("%s\n", command+i+1);
+  } else if (!strcmp(word, "type")) {
+    for(size_t j = 0; j < sizeof(builtins) / 12; j++) {
+      if(!strcmp(command+i+1, builtins[j])) {
+        printf("%s is a shell builtin\n", builtins[j]);
+        return 0;
+      }
+    }
+    printf("%s not found\n", command+i+1);
   } else {
     printf("%s: command not found\n", command);
   }
