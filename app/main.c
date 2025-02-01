@@ -1,8 +1,34 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 const char builtins[][12] = {"type", "echo", "exit"};
+
+char* checkPATH(char* command) {
+  char path[1024];
+  char* envPath = getenv("PATH");
+  char* dirs;
+
+  if (envPath != NULL) {
+    strncpy(path, envPath, sizeof(path));
+    dirs = strtok(path, ":");
+  } else {
+    return NULL;
+  }
+
+  static char fullCmdPath[1024];
+
+  while(dirs) {
+    snprintf(fullCmdPath, sizeof(fullCmdPath), "%s/%s", dirs, command);
+    if (access(fullCmdPath, X_OK) == 0) {
+      return fullCmdPath;
+    }
+    dirs = strtok(NULL, ":");
+  }
+
+  return NULL;
+}
 
 int parseCommand(char* command, int len) {
   char word[100];
@@ -18,15 +44,23 @@ int parseCommand(char* command, int len) {
   } else if (!strcmp(word, "echo")) {
     printf("%s\n", command+i+1);
   } else if (!strcmp(word, "type")) {
+    
     for(size_t j = 0; j < sizeof(builtins) / 12; j++) {
       if(!strcmp(command+i+1, builtins[j])) {
         printf("%s is a shell builtin\n", builtins[j]);
         return 0;
       }
     }
+    
+    char* found = checkPATH(command+i+1);
+    if (found) {
+      printf("%s is %s\n", command+i+1, found);
+      return 0;
+    }
+
     printf("%s not found\n", command+i+1);
   } else {
-    printf("%s: command not found\n", command);
+    printf("%s not found\n", command+i+1);
   }
   return 0;
 }
