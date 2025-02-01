@@ -58,9 +58,9 @@ int parseCommand(char* command, int len) {
       return 0;
     }
 
-    printf("%s not found\n", command+i+1);
+    printf("%s: not found\n", command+i+1);
   } else {
-    printf("%s not found\n", command+i+1);
+    printf("%s: command not found\n", command);
   }
   return 0;
 }
