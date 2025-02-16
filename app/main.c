@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 const char builtins[][12] = {"type", "echo", "exit"};
 
@@ -28,6 +30,44 @@ char* checkPATH(char* command) {
   }
 
   return NULL;
+}
+
+int executeProgram(char* command) {
+  char* args;
+  args = strtok(command, " ");
+  char* programPath = checkPATH(args);
+
+  if (programPath == NULL) {                // ERROR: Program not found
+    //printf("Program not in PATH");
+    return 1;
+  }
+  args = strtok(NULL, " ");
+  
+  char* argArr[10];
+  int i = 0;
+  while (args != NULL && i < 10) {
+    argArr[i++] = args;
+    args = strtok(args, " ");
+  }
+
+  if (args != NULL) {
+    //printf("ERROR: Too many arguements");
+    return 1;
+  }
+
+  // Fork and execute program
+  pid_t pid = fork();
+  if (pid == 0) {
+    execv(programPath, argArr);
+  } else if (pid < 0) {
+    //printf("ERROR: Failed to fork.");
+    return 1;
+  } else {
+    int programExited;
+    waitpid(pid, &programExited, 0);
+  }
+
+  return 0;
 }
 
 int parseCommand(char* command, int len) {
@@ -60,7 +100,10 @@ int parseCommand(char* command, int len) {
 
     printf("%s: not found\n", command+i+1);
   } else {
-    printf("%s: command not found\n", command);
+    int programExecStatus = executeProgram(command);
+    if (programExecStatus == 1) {
+      printf("%s: command not found\n", command);
+    }
   }
   return 0;
 }
