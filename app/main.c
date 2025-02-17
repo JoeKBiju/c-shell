@@ -38,13 +38,6 @@ char* checkPATH(char* command) {
 int executeProgram(char* command) {
   char* args;
   args = strtok(command, " ");
-  char* programPath = checkPATH(args);
-
-  if (programPath == NULL) {                // ERROR: Program not found
-    //printf("Program not in PATH");
-    return 1;
-  }
-  args = strtok(NULL, " ");
   
   char* argArr[10];
   int i = 0;
@@ -53,8 +46,13 @@ int executeProgram(char* command) {
     args = strtok(NULL, " ");
   }
   argArr[i] = NULL;  // Need to end args array with NULL or will cause error
-
-  if (args != NULL) {
+  
+  char* programPath = checkPATH(argArr[0]);
+  if (programPath == NULL) {                // ERROR: Program not found
+    //printf("Program not in PATH");
+    return 1;
+  }
+  if (args != NULL) {                       // There were more than 10 arguements
     //printf("ERROR: Too many arguements");
     return 1;
   }
@@ -112,6 +110,7 @@ int parseCommand(char* command, int len) {
       printf("%s: command not found\n", command);
     }
   }
+  fflush(stdout);
   return 0;
 }
 
