@@ -1,10 +1,10 @@
+#define PATH_MAX 4096
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <linux/limits.h>
 
 // Commands built into this shell
 const char* builtins[12] = {"pwd", "type", "echo", "exit"};
