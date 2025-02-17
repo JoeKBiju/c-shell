@@ -4,13 +4,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <linux/limits.h>
 
 // Commands built into this shell
-const char builtins[][12] = {"type", "echo", "exit"};
+const char* builtins[12] = {"pwd", "type", "echo", "exit"};
 
 // Gets the full path address of a command in PATH
 char* checkPATH(char* command) {
-  char path[1024];
+  char path[PATH_MAX];
   char* envPath = getenv("PATH");
   char* dirs;
 
@@ -82,12 +83,16 @@ int parseCommand(char* command, int len) {
     word[i] = *(command + i);
     i++;
   }
- 
   word[i] = '\0';
+
   if (!strcmp(word, "exit")) {
+    
     if (*(command + i+1) == '0') { return 1; }
+
   } else if (!strcmp(word, "echo")) {
+    
     printf("%s\n", command+i+1);
+
   } else if (!strcmp(word, "type")) {
     
     for(size_t j = 0; j < sizeof(builtins) / 12; j++) {
@@ -104,12 +109,25 @@ int parseCommand(char* command, int len) {
     }
 
     printf("%s: not found\n", command+i+1);
+
+  } else if (!strcmp(word, "pwd")) {
+    
+    char currDir[PATH_MAX];
+    if (getcwd(currDir, sizeof(currDir)) != NULL) { 
+      printf("%s\n", currDir);
+    } else {
+      perror("getcwd: ");
+    }
+
   } else {
+    
     int programExecStatus = executeProgram(command);
     if (programExecStatus == 1) {
       printf("%s: command not found\n", command);
     }
+  
   }
+
   fflush(stdout);
   return 0;
 }
