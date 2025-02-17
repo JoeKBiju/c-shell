@@ -1,4 +1,3 @@
-#define PATH_MAX 4096
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,11 +6,11 @@
 #include <sys/wait.h>
 
 // Commands built into this shell
-const char* builtins[12] = {"pwd", "type", "echo", "exit"};
+const char builtins[][10] = {"pwd", "type", "echo", "exit"};
 
 // Gets the full path address of a command in PATH
 char* checkPATH(char* command) {
-  char path[PATH_MAX];
+  char path[1024];
   char* envPath = getenv("PATH");
   char* dirs;
 
@@ -95,7 +94,7 @@ int parseCommand(char* command, int len) {
 
   } else if (!strcmp(word, "type")) {
     
-    for(size_t j = 0; j < sizeof(builtins) / 12; j++) {
+    for(size_t j = 0; j < sizeof(builtins) / 10; j++) {
       if(!strcmp(command+i+1, builtins[j])) {
         printf("%s is a shell builtin\n", builtins[j]);
         return 0;
@@ -112,7 +111,7 @@ int parseCommand(char* command, int len) {
 
   } else if (!strcmp(word, "pwd")) {
     
-    char currDir[PATH_MAX];
+    char currDir[1024];
     if (getcwd(currDir, sizeof(currDir)) != NULL) { 
       printf("%s\n", currDir);
     } else {
