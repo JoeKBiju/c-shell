@@ -47,7 +47,7 @@ int executeProgram(char* command) {
   int i = 0;
   while (args != NULL && i < 10) {
     argArr[i++] = args;
-    args = strtok(args, " ");
+    args = strtok(NULL, " ");
   }
 
   if (args != NULL) {
@@ -71,7 +71,7 @@ int executeProgram(char* command) {
 }
 
 int parseCommand(char* command, int len) {
-  char word[100];
+  char word[50];
   int i = 0;
   while (*(command+i) != ' ' && *(command+i) != '\0') {
     word[i] = *(command + i);
