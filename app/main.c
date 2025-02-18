@@ -118,10 +118,10 @@ int parseCommand(char* command, int len) {
       perror("getcwd: ");
     }
 
-  } else if (!strcmp(word, "cd")) {
+ } else if (!strcmp(word, "cd")) {
 
     if((chdir(command+i+1)) == -1) {
-      printf("cd: %s: No such file or directory", command+i+1);
+      printf("cd: %s: No such file or directory\n", command+i+1);
     }
 
   } else {
