@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 
 // Commands built into this shell
-const char builtins[][10] = {"pwd", "type", "echo", "exit"};
+const char builtins[][10] = {"cd", "pwd", "type", "echo", "exit"};
 
 // Gets the full path address of a command in PATH
 char* checkPATH(char* command) {
@@ -116,6 +116,12 @@ int parseCommand(char* command, int len) {
       printf("%s\n", currDir);
     } else {
       perror("getcwd: ");
+    }
+
+  } else if (!strcmp(word, "cd")) {
+
+    if((chdir(command+i+1)) == -1) {
+      printf("cd: %s: No such file or directory", command+i+1);
     }
 
   } else {
