@@ -119,9 +119,25 @@ int parseCommand(char* command, int len) {
     }
 
  } else if (!strcmp(word, "cd")) {
+    
+    if(!strcmp(command+i+1, "~")) {
+      char* username = getlogin();
+      if(username == NULL) {
+        perror("getlogin: ");
+      }
+      char userHomePath[1024];
+      snprintf(userHomePath, sizeof(userHomePath), "/home/%s", username);
 
-    if((chdir(command+i+1)) == -1) {
-      printf("cd: %s: No such file or directory\n", command+i+1);
+      if(chdir(userHomePath) == -1) {
+        printf("cd: %s: Something went wrong!\n", userHomePath);
+      }
+
+    } else {
+
+      if((chdir(command+i+1)) == -1) {
+        printf("cd: %s: No such file or directory\n", command+i+1);
+      }
+
     }
 
   } else {
