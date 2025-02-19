@@ -74,6 +74,28 @@ int executeProgram(char* command) {
   return 0;
 }
 
+//Changes Directory
+void changeDir(char *args) {
+  if(!strcmp(args, "~")) {
+
+    char* homePath = getenv("HOME");
+    if(homePath == NULL) {
+      printf("No home directory!");
+    }
+
+    if(chdir(homePath) == -1) {
+      printf("cd: %s: Something went wrong!\n", homePath);
+    }
+
+  } else {
+
+    if((chdir(args)) == -1) {
+      printf("cd: %s: No such file or directory\n", args);
+    }
+
+  }
+}
+
 // Parses input string to identify commands and arguements
 int parseCommand(char* command, int len) {
   char word[50];
@@ -120,25 +142,7 @@ int parseCommand(char* command, int len) {
 
  } else if (!strcmp(word, "cd")) {
     
-    if(!strcmp(command+i+1, "~")) {
-      char* username = getlogin();
-      if(username == NULL) {
-        perror("getlogin: ");
-      }
-      char userHomePath[1024];
-      snprintf(userHomePath, sizeof(userHomePath), "/home/%s", username);
-
-      if(chdir(userHomePath) == -1) {
-        printf("cd: %s: Something went wrong!\n", userHomePath);
-      }
-
-    } else {
-
-      if((chdir(command+i+1)) == -1) {
-        printf("cd: %s: No such file or directory\n", command+i+1);
-      }
-
-    }
+    changeDir(command+i+1);
 
   } else {
     
